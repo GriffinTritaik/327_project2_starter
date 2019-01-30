@@ -20,13 +20,22 @@
 //	stuff you will need
 //============================================================================
 //zero out array that tracks words and their occurrences
+
+struct entry
+{
+	std::string word;
+	int number_occurence;
+};
+
+entry array[constants::MAX_WORDS];
+
 void clearArray(){
-	return;
+
 }
 
 //how many unique words are in array
 int getArraySize(){
-	return 0;
+	return 0;//array_functions
 }
 
 //get data at a particular location
@@ -60,12 +69,13 @@ void processToken(std::string &token){
 /*if you are debugging the file must be in the project parent directory
   in this case Project2 with the .project and .cProject files*/
 bool openFile(std::fstream& myfile, const std::string& myFileName, std::ios_base::openmode mode){
+	myfile.open(myFileName.c_str(), mode);
 	return true;
 }
 
 /*iff myfile is open then close it*/
 void closeFile(std::fstream& myfile){
-
+	myfile.close();
 }
 
 /* serializes all content in myEntryArray to file outputfilename
@@ -74,7 +84,7 @@ void closeFile(std::fstream& myfile){
  * 			SUCCESS if all data is written and outputfilename closes OK
  * */
 int writeArraytoFile(const std::string &outputfilename){
-	return 0;
+	return constants::SUCCESS;
 }
 
 /*
