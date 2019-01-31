@@ -30,12 +30,20 @@ struct entry
 entry array[constants::MAX_WORDS];
 
 void clearArray(){
-
+	int i;
+	for (i = 0; i < constants::MAX_WORDS; i++){
+		array[i].word = "";
+		array[i].number_occurence = 0;
+	}
 }
 
 //how many unique words are in array
 int getArraySize(){
-	return 0;//array_functions
+	int toReturn = 0;
+	while (array[toReturn].word != ""){
+		toReturn++;
+	}
+	return toReturn;
 }
 
 //get data at a particular location
@@ -69,8 +77,11 @@ void processToken(std::string &token){
 /*if you are debugging the file must be in the project parent directory
   in this case Project2 with the .project and .cProject files*/
 bool openFile(std::fstream& myfile, const std::string& myFileName, std::ios_base::openmode mode){
-	myfile.open(myFileName.c_str(), mode);
-	return true;
+	if (!myfile.is_open()){
+		myfile.open(myFileName, mode);
+		return true;
+	}
+	return false;
 }
 
 /*iff myfile is open then close it*/
