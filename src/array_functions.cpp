@@ -27,20 +27,19 @@ struct entry
 	int number_occurence;
 };
 
-entry array[constants::MAX_WORDS];
+entry list[constants::MAX_WORDS];
 
 void clearArray(){
-	int i;
-	for (i = 0; i < constants::MAX_WORDS; i++){
-		array[i].word = "";
-		array[i].number_occurence = 0;
+	for (int i = 0; i < constants::MAX_WORDS; i++){
+		list[i].word = "";
+		list[i].number_occurence = 0;
 	}
 }
 
 //how many unique words are in array
 int getArraySize(){
 	int toReturn = 0;
-	while (array[toReturn].word != ""){
+	while (list[toReturn].word != ""){
 		toReturn++;
 	}
 	return toReturn;
@@ -60,23 +59,47 @@ int getArrayWord_NumbOccur_At(int i){
  * returns false: myfstream is not open
  *         true: otherwise*/
 bool processFile(std::fstream &myfstream){
-	return false;
+	if (!myfstream.eof()){
+		return false;
+	}
+	std::string line;
+	while (!myfstream.eof()) {
+			getline(myfstream, line);
+			processLine(line);
+	}
+	myfstream.close();
+	return true;
 }
 
 /*take 1 line and extract all the tokens from it
 feed each token to processToken for recording*/
 void processLine(std::string &myString){
-
+	strip_unwanted_chars(myString);
+	processToken(myString);
 }
 
 /*Keep track of how many times each token seen*/
 void processToken(std::string &token){
-
+	strip_unwanted_chars(token);
+	if (token == ""){
+		return;
+	}
+	for (int i = 0; i < constants::MAX_WORDS; i++){
+		if (list[i].word == token){
+			list[i].number_occurence++;
+		}
+		if (list[i].word == ""){
+			list[i].word = token;
+			list[i].number_occurence++;
+			break;
+		}
+	}
 }
 
 /*if you are debugging the file must be in the project parent directory
   in this case Project2 with the .project and .cProject files*/
-bool openFile(std::fstream& myfile, const std::string& myFileName, std::ios_base::openmode mode){
+bool openFile(std::fstream& myfile, const std::string& myFileName,
+			std::ios_base::openmode mode){
 	if (!myfile.is_open()){
 		myfile.open(myFileName, mode);
 		return true;
