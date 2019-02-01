@@ -77,7 +77,7 @@ void processLine(std::string &myString){
 	std::stringstream ss(myString);
 	std::string token;
 
-	while(getline(ss,token,' ')){
+	while(getline(ss,token,constants::CHAR_TO_SEARCH_FOR)){
 		processToken(token);
 	}
 }
@@ -128,7 +128,18 @@ void closeFile(std::fstream& myfile){
  * 			SUCCESS if all data is written and outputfilename closes OK
  * */
 int writeArraytoFile(const std::string &outputfilename){
-	return 0;
+	std::fstream file;
+	if (openFile(file, outputfilename)){
+		return constants::FAIL_FILE_DID_NOT_OPEN;
+	}
+	if (listSize == 0){
+		return constants::FAIL_NO_ARRAY_DATA;
+	}
+	for (int i = 0; i < listSize; i++){
+		file << "test";
+	}
+	file.close();
+	return constants::SUCCESS;
 }
 
 /*
