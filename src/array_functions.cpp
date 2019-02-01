@@ -72,16 +72,11 @@ bool processFile(std::fstream &myfstream){
 /*take 1 line and extract all the tokens from it
 feed each token to processToken for recording*/
 void processLine(std::string &myString){
-	strip_unwanted_chars(myString);
-	std::string temp;
-	for (int i = 0; i < myString.length(); i++){
-		if (myString[i] != " "){
-			temp =+ myString[i];
-		}
-		else {
-			processToken(temp);
-			temp = "";
-		}
+	std::stringstream ss(myString);
+	std::string token;
+
+	while(getline(ss,token,' ')){
+		processToken(token);
 	}
 }
 
@@ -131,7 +126,7 @@ void closeFile(std::fstream& myfile){
  * 			SUCCESS if all data is written and outputfilename closes OK
  * */
 int writeArraytoFile(const std::string &outputfilename){
-	return constants::SUCCESS;
+	return 0;
 }
 
 /*
