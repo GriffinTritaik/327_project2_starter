@@ -29,7 +29,9 @@ struct entry
 
 entry list[constants::MAX_WORDS];
 
+int listSize = 0;
 void clearArray(){
+	listSize = 0;
 	for (int i = 0; i < constants::MAX_WORDS; i++){
 		list[i].word = "";
 		list[i].number_occurence = 0;
@@ -38,20 +40,16 @@ void clearArray(){
 
 //how many unique words are in array
 int getArraySize(){
-	int toReturn = 0;
-	while (list[toReturn].word != ""){
-		toReturn++;
-	}
-	return toReturn;
+	return listSize;
 }
 
 //get data at a particular location
 std::string getArrayWordAt(int i){
-	return "";
+	return list[i].word;
 }
 
 int getArrayWord_NumbOccur_At(int i){
-	return 0;
+	return list[i].number_occurence;
 }
 
 /*loop through whole file, one line at a time
@@ -75,7 +73,16 @@ bool processFile(std::fstream &myfstream){
 feed each token to processToken for recording*/
 void processLine(std::string &myString){
 	strip_unwanted_chars(myString);
-	processToken(myString);
+	std::string temp;
+	for (int i = 0; i < myString.length(); i++){
+		if (myString[i] != " "){
+			temp =+ myString[i];
+		}
+		else {
+			processToken(temp);
+			temp = "";
+		}
+	}
 }
 
 /*Keep track of how many times each token seen*/
@@ -85,30 +92,36 @@ void processToken(std::string &token){
 		return;
 	}
 	for (int i = 0; i < constants::MAX_WORDS; i++){
-		if (list[i].word == token){
+		std::string tempToken = token;
+		std::string tempWord = list[i].word;
+		toUpper(tempToken);
+		toUpper(tempWord);
+		if (tempToken == tempWord){
 			list[i].number_occurence++;
-		}
-		if (list[i].word == ""){
-			list[i].word = token;
-			list[i].number_occurence++;
-			break;
+			return;
 		}
 	}
+	list[listSize].number_occurence = 1;
+	list[listSize].word = token;
+	listSize++;
 }
 
 /*if you are debugging the file must be in the project parent directory
   in this case Project2 with the .project and .cProject files*/
 bool openFile(std::fstream& myfile, const std::string& myFileName,
 			std::ios_base::openmode mode){
+	myfile.open(myFileName, mode);
 	if (!myfile.is_open()){
-		myfile.open(myFileName, mode);
-		return true;
+		return false;
 	}
-	return false;
+	return true;
 }
 
 /*iff myfile is open then close it*/
 void closeFile(std::fstream& myfile){
+	if (!myfile.is_open()){
+		return;
+	}
 	myfile.close();
 }
 
