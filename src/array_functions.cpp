@@ -27,9 +27,11 @@ struct entry
 	int number_occurence;
 };
 
+//array made with max size and a pointer with size value
 entry list[constants::MAX_WORDS];
-
 int listSize = 0;
+
+//resets the values of the each spot in the array to empty string with occurrence of 0 times
 void clearArray(){
 	listSize = 0;
 	for (int i = 0; i < constants::MAX_WORDS; i++){
@@ -135,5 +137,61 @@ int writeArraytoFile(const std::string &outputfilename){
  * The presence of the enum implies a switch statement based on its value
  */
 void sortArray(constants::sortOrder so){
+	switch (so){
+		case constants::ASCENDING:
+			for (int i = 0; i < listSize; i++){
+				for (int j = i + 1; j < listSize; j++){
+					std::string first = list[i].word;
+					std::string second = list[j].word;
+					toUpper(first);
+					toUpper(second);
+					if (first > second){
+						std::string temp = list[i].word;
+						int tempInt = list[i].number_occurence;
+						list[i].word = list[j].word;
+						list[i].number_occurence = list[j].number_occurence;
+						list[j].word = temp;
+						list[j].number_occurence = tempInt;
+					}
+				}
+			}
+			break;
+		case constants::DESCENDING:
+			for (int i = 0; i < listSize; i++){
+				for (int j = i + 1; j < listSize; j++){
+					std::string first = list[i].word;
+					std::string second = list[j].word;
+					toUpper(first);
+					toUpper(second);
+					if (first < second){
+						std::string temp = list[i].word;
+						int tempInt = list[i].number_occurence;
+						list[i].word = list[j].word;
+						list[i].number_occurence = list[j].number_occurence;
+						list[j].word = temp;
+						list[j].number_occurence = tempInt;
+					}
+				}
+			}
+			break;
+		case constants::NUMBER_OCCURRENCES:
+			for (int i = 0; i < listSize; i++){
+				for (int j = i + 1; j < listSize; j++){
+					int first = list[i].number_occurence;
+					int second = list[j].number_occurence;
+					if (first < second){
+						int tempInt = first;
+						std::string tempSting = list[i].word;
+						list[i].word = list[j].word;
+						list[i].number_occurence = list[j].number_occurence;
+						list[j].word = tempSting;
+						list[j].number_occurence = tempInt;
+					}
+				}
+			}
+			break;
+		case constants::NONE:
+			break;
+	}
 
 }
