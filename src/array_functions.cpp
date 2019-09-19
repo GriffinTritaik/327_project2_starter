@@ -103,10 +103,10 @@ void processToken(std::string &token){
 bool openFile(std::fstream& myfile, const std::string& myFileName,
 		std::ios_base::openmode mode){
     myfile.open(myFileName, mode);
-    if (myfile.is_open()){
-        return true;
+    if (!myfile.is_open()){
+        return false;
     }
-    return false;
+    return true;
 }
 
 /*iff myfile is open then close it*/
@@ -157,10 +157,10 @@ void sortArray(constants::sortOrder so){
                 if (first > second){
                 	std::string temp = word_list[i].word;
 		            int tempInt = word_list[i].num;
-		            word_list[i].word = word_list[j].word;
 		            word_list[i].num = word_list[j].num;
-		            word_list[j].word = temp;
+		            word_list[i].word = word_list[j].word;
 		            word_list[j].num = tempInt;
+		            word_list[j].word = temp;
 		            }
 		        }
 		    }
