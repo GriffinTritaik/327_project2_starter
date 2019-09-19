@@ -1,11 +1,10 @@
 /*
  * functionstocomplete.cpp
  *
- *  Created on: 1/30/19
- *      Author: Griffin Triatik
+ *  Created on: Sep 19, 2019
+ *  Author: Griffin Tritaik
  */
 
-//============================================================================
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -14,44 +13,41 @@
 #include "constants.h"
 #include "utilities.h"
 
-//============================================================================
+using namespace std;
+using namespace constants;
 
-//============================================================================
-//    stuff you will need
-//============================================================================
-//zero out array that tracks words and their occurrences
-
+//struct to hold all the information
 struct entry
 {
-    std::string word;
-    int number_occurence;
+	string word;
+	int num;
 };
 
-//array made with max size and a pointer with size value
-entry list[constants::MAX_WORDS];
-int listSize = 0;
+//
+entry word_list[MAX_WORDS];
+int size = 0;
 
-//resets the values of the each spot in the array to empty string with occurrence of 0 times
+//zero out array that tracks words and their occurrences
 void clearArray(){
-    listSize = 0;
-    for (int i = 0; i < constants::MAX_WORDS; i++){
-        list[i].word = "";
-        list[i].number_occurence = 0;
-    }
+	size = 0;
+	for (int i = 0; i < MAX_WORDS; i++){
+		word_list[i].num = 0;
+		word_list[i].word = "";
+	}
 }
 
 //how many unique words are in array
 int getArraySize(){
-    return listSize;
+	return size;
 }
 
 //get data at a particular location
 std::string getArrayWordAt(int i){
-    return list[i].word;
+	return word_list[i].word;
 }
 
 int getArrayWord_NumbOccur_At(int i){
-    return list[i].number_occurence;
+	return word_list[i].num;
 }
 
 /*loop through whole file, one line at a time
@@ -59,26 +55,25 @@ int getArrayWord_NumbOccur_At(int i){
  * returns false: myfstream is not open
  *         true: otherwise*/
 bool processFile(std::fstream &myfstream){
-    if(!myfstream.is_open()){
-        return false;
-    }
-    std::string line;
-    while (!myfstream.eof()) {
-            getline(myfstream, line);
-            processLine(line);
-    }
-    myfstream.close();
-    return true;
+	if(!myfstream.is_open()){
+		return false;
+	}
+	string my_line;
+	while (!myfstream.eof()){
+		getline(myfstream,my_line);
+		processLine(my_line);
+	}
+	myfstream.close();
+	return true;
 }
 
 /*take 1 line and extract all the tokens from it
 feed each token to processToken for recording*/
 void processLine(std::string &myString){
-    std::stringstream ss(myString);
-    std::string token;
-
-    while(getline(ss,token,constants::CHAR_TO_SEARCH_FOR)){
-        processToken(token);
+	stringstream stream(myString);
+	string my_token;
+    while(getline(stream,my_token,CHAR_TO_SEARCH_FOR)){
+        processToken(my_token);
     }
 }
 
@@ -86,62 +81,63 @@ void processLine(std::string &myString){
 void processToken(std::string &token){
     strip_unwanted_chars(token);
     if (token == ""){
-        return;
+    	return;
     }
-    for (int i = 0; i < constants::MAX_WORDS; i++){
-        std::string tempToken = token;
-        std::string tempWord = list[i].word;
-        toUpper(tempToken);
-        toUpper(tempWord);
-        if (tempToken == tempWord){
-            list[i].number_occurence++;
-            return;
-        }
+    for (int i = 0; i < MAX_WORDS; i++){
+    	string tempT = token;
+    	string tempW = word_list[i].word;
+    	toUpper(tempT);
+    	toUpper(tempW);
+    	if (tempT == tempW){
+    		word_list[i].num++;
+    		return;
+    	}
     }
-    list[listSize].number_occurence = 1;
-    list[listSize].word = token;
-    listSize++;
+    word_list[size].word = token;
+    word_list[size].num = 1;
+    size++;
 }
 
 /*if you are debugging the file must be in the project parent directory
   in this case Project2 with the .project and .cProject files*/
 bool openFile(std::fstream& myfile, const std::string& myFileName,
-            std::ios_base::openmode mode){
+		std::ios_base::openmode mode){
     myfile.open(myFileName, mode);
-    if (!myfile.is_open()){
-        return false;
+    if (myfile.is_open()){
+        return true;
     }
-    return true;
+    return false;
 }
 
 /*iff myfile is open then close it*/
 void closeFile(std::fstream& myfile){
-    if (!myfile.is_open()){
-        return;
-    }
-    myfile.close();
+	if (!myfile.is_open()){
+		return;
+	}
+	myfile.close();
+	return;
 }
 
 /* serializes all content in myEntryArray to file outputfilename
  * returns  FAIL_FILE_DID_NOT_OPEN if cannot open outputfilename
- *             FAIL_NO_ARRAY_DATA if there are 0 entries in myEntryArray
- *             SUCCESS if all data is written and outputfilename closes OK
+ * 			FAIL_NO_ARRAY_DATA if there are 0 entries in myEntryArray
+ * 			SUCCESS if all data is written and outputfilename closes OK
  * */
 int writeArraytoFile(const std::string &outputfilename){
-    if (listSize == 0){
+    if (size == 0){
         return constants::FAIL_NO_ARRAY_DATA;
     }
     std::ofstream file;
     file.open(outputfilename.c_str());
     if (!file.is_open()){
     	file.close();
-        return constants::FAIL_FILE_DID_NOT_OPEN;
+        return FAIL_FILE_DID_NOT_OPEN;
     }
-    for (int i = 0; i < listSize; i++){
-    	file << list[i].word + " " + std::to_string(list[i].number_occurence) + "\n";
+    for (int i = 0; i < size; i++){
+    	file << word_list[i].word + " " + to_string(word_list[i].num) + "\n";
     }
     file.close();
-    return constants::SUCCESS;
+    return SUCCESS;
 }
 
 /*
@@ -150,60 +146,30 @@ int writeArraytoFile(const std::string &outputfilename){
  * The presence of the enum implies a switch statement based on its value
  */
 void sortArray(constants::sortOrder so){
-    switch (so){
-        case constants::ASCENDING:
-            for (int i = 0; i < listSize; i++){
-                for (int j = i + 1; j < listSize; j++){
-                    std::string first = list[i].word;
-                    std::string second = list[j].word;
-                    toUpper(first);
-                    toUpper(second);
-                    if (first > second){
-                        std::string temp = list[i].word;
-                        int tempInt = list[i].number_occurence;
-                        list[i].word = list[j].word;
-                        list[i].number_occurence = list[j].number_occurence;
-                        list[j].word = temp;
-                        list[j].number_occurence = tempInt;
-                    }
-                }
-            }
-            break;
-        case constants::DESCENDING:
-            for (int i = 0; i < listSize; i++){
-                for (int j = i + 1; j < listSize; j++){
-                    std::string first = list[i].word;
-                    std::string second = list[j].word;
-                    toUpper(first);
-                    toUpper(second);
-                    if (first < second){
-                        std::string temp = list[i].word;
-                        int tempInt = list[i].number_occurence;
-                        list[i].word = list[j].word;
-                        list[i].number_occurence = list[j].number_occurence;
-                        list[j].word = temp;
-                        list[j].number_occurence = tempInt;
-                    }
-                }
-            }
-            break;
-        case constants::NUMBER_OCCURRENCES:
-            for (int i = 0; i < listSize; i++){
-                for (int j = i + 1; j < listSize; j++){
-                    int first = list[i].number_occurence;
-                    int second = list[j].number_occurence;
-                    if (first < second){
-                        int tempInt = first;
-                        std::string tempSting = list[i].word;
-                        list[i].word = list[j].word;
-                        list[i].number_occurence = list[j].number_occurence;
-                        list[j].word = tempSting;
-                        list[j].number_occurence = tempInt;
-                    }
-                }
-            }
-            break;
-        case constants::NONE:
-            break;
-    }
+	switch (so){
+	case ASCENDING:
+		for (int i = 0; i < size; i++){
+            for (int j = i + 1; j < size; j++){
+                std::string first = word_list[i].word;
+                std::string second = word_list[j].word;
+                toUpper(first);
+                toUpper(second);
+                if (first > second){
+                	std::string temp = word_list[i].word;
+		            int tempInt = word_list[i].num;
+		            word_list[i].word = word_list[j].word;
+		            word_list[i].num = word_list[j].num;
+		            word_list[j].word = temp;
+		            word_list[j].num = tempInt;
+		            }
+		        }
+		    }
+		break;
+	case DESCENDING:
+		break;
+	case NUMBER_OCCURRENCES:
+		break;
+	case NONE:
+		break;
+	}
 }
